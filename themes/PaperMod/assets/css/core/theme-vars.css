@@ -1,0 +1,50 @@
+:root {
+    --gap: 24px;
+    --content-gap: 20px;
+    --nav-width: 1024px;
+    --main-width: 720px;
+    --header-height: 60px;
+    --footer-height: 60px;
+    --radius: 8px;
+
+    /* Light theme */
+    --theme: rgb(248, 247, 245);
+    --entry: rgb(255, 255, 255);
+
+    --primary: rgb(32, 32, 34);
+    --secondary: rgb(120, 112, 104);     /* warm gray */
+    --tertiary: rgb(236, 228, 220);      /* orange-tinted neutral */
+
+    --content: rgb(34, 34, 36);
+
+    --code-block-bg: rgb(246, 244, 241);
+    --code-bg: rgb(255, 255, 255);
+    --border: rgb(228, 220, 212);        /* warm border */
+
+    color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+    /* Dark theme */
+    --theme: rgb(23, 23, 23);
+    --entry: rgb(30, 28, 26);
+
+    --primary: rgb(235, 232, 228);
+    --secondary: rgb(170, 160, 150);     /* warm gray */
+    --tertiary: rgb(78, 66, 56);          /* muted orange undertone */
+
+    --content: rgb(212, 208, 203);
+
+    --code-block-bg: rgb(34, 32, 30);
+    --code-bg: rgb(44, 42, 40);
+    --border: rgb(44,42,40);
+    color-scheme: dark;
+}
+
+.list {
+    background: var(--code-bg);
+}
+
+[data-theme="dark"] .list {
+    background: var(--theme);
+}
