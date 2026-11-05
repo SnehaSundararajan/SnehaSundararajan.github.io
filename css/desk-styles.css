@@ -1,0 +1,517 @@
+/* ==========================================================================
+   Desk styles: one desk, ten looks. Base layout first, then one block per
+   style, each scoped by .ds-style-<id>. Decoration stickers reuse the
+   .d-face sticker shapes, so every style keeps the same sizes.
+   ========================================================================== */
+
+.ds { position: absolute; inset: 0; overflow: hidden; }
+.ds-layer { position: absolute; inset: 0; }
+/* The sticker layer is its own stacking context, so a dragged sticker (which climbs in z-index)
+   can never rise above the X-ray layer under the circle. */
+.ds-top { z-index: 1; }
+.ds-under { z-index: 10; pointer-events: none; clip-path: circle(0 at 50% 50%); }
+.ds-under.is-inverse { filter: invert(1) hue-rotate(180deg); }
+.ds-flow { position: absolute; left: 7cqw; top: 20%; display: flex; flex-direction: column; gap: 16px; width: min(620px, 54%); }
+.ds-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.ds-item { position: absolute; left: 0; top: 0; z-index: 2; touch-action: none; user-select: none; }
+.ds-flow .ds-item { position: static; }
+/* Decoration stickers scale with the stage on the website (--k, set by the engine; 1 in the lab). */
+.ds-k-deco { scale: var(--k, 1); transform-origin: 0 0; }
+.ds-under .ds-item { display: grid; place-items: center; }
+/* Under the circle the name sits a few pixels to the right, like a second print pass. */
+.ds-under .ds-k-word { place-items: center start; }
+.ds-under .ds-k-word .ds-face { translate: 6px 0; }
+.ds-face { display: block; white-space: nowrap; rotate: calc(var(--r, 0deg) + var(--tilt, 0deg)); transition: scale calc(220ms * var(--dur)) var(--ease); }
+.ds-item.is-held .ds-face { scale: 1.07; }
+.stage[data-hover="on"] .ds-top .ds-item:not(.is-held):hover .ds-face { scale: 1.03; }
+.ds-item:focus-visible { outline: none; }
+.ds-item:focus-visible .ds-face { outline: 2px solid var(--accent); outline-offset: 6px; }
+.ds-word { display: block; padding: 0 0.04em; font-family: var(--font-sans); font-size: clamp(60px, 10.5cqw, 132px); font-weight: 800; line-height: 1; letter-spacing: -0.045em; }
+.ds-role { display: inline-block; padding: 8px 18px; border-radius: 99px; font-size: clamp(16px, 2.2cqw, 24px); font-weight: 600; letter-spacing: -0.01em; }
+.ds-tag { display: inline-block; padding: 10px 16px; font-size: clamp(18px, 2cqw, 22px); }
+.ds-ring { position: absolute; left: 0; top: 0; z-index: 11; pointer-events: none; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--text), 0 0 0 4px color-mix(in oklch, var(--bg) 55%, transparent); }
+.ds .it1-tidy { z-index: 30; }
+.ds-opts { z-index: 40; }
+@container stage (max-width: 700px) { .ds-flow { left: 18px; top: 64px; width: calc(100% - 36px); gap: 10px; } }
+
+/* Outlined styles drop the sticker fill and its built-in art; the outline SVG takes over. */
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-stamp, .ds-style-blueprint, .ds-style-sumi) .d-face { filter: none; }
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-stamp, .ds-style-blueprint, .ds-style-sumi) .d-face::before,
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-face > svg:not(.sk-pencil),
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-lines { display: none; }
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-stamp .d-label { border: 0; }
+/* Picture stickers turn to graphite in outlined styles; the outline draws the print frame. */
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-img { filter: grayscale(1) contrast(1.15) brightness(1.05); mix-blend-mode: multiply; opacity: 0.8; }
+.ds-style-blueprint .d-img { mix-blend-mode: screen; filter: grayscale(1) invert(1); }
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-hover { font-family: var(--font-serif); font-size: 19px; font-style: italic; font-weight: 400; }
+:is(.ds-style-sketch, .ds-style-minimal, .ds-style-brutal, .ds-style-halftone, .ds-style-stamp, .ds-style-marker, .ds-style-blueprint, .ds-style-inkwash, .ds-style-sumi, .ds-style-fineliner, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-indigo, .ds-style-colorpencil) .d-linkedin .d-label { color: inherit; font-style: normal; }
+/* Outlined styles color the line with currentColor unless they say otherwise. */
+:is(.ds-style-stamp) .sk-pencil * { stroke: currentColor; }
+
+/* ============================== Stickers ============================== */
+
+.ds-style-sticker {
+  --die: light-dark(#fff, oklch(94% 0.005 85));
+  --cut: drop-shadow(3px 0 0 var(--die)) drop-shadow(-3px 0 0 var(--die)) drop-shadow(0 3px 0 var(--die)) drop-shadow(0 -3px 0 var(--die));
+  background-color: var(--bg-2);
+  background-image: radial-gradient(circle at 1px 1px, var(--line-2) 1px, transparent 0); background-size: 22px 22px;
+}
+.ds-style-sticker .ds-word { color: #1d1c22; filter: var(--cut) drop-shadow(0 6px 8px oklch(0% 0 0 / 0.22)); }
+.ds-style-sticker .ds-role { background: var(--c); color: var(--pop-ink); filter: var(--cut) drop-shadow(0 4px 6px oklch(0% 0 0 / 0.2)); }
+.ds-style-sticker .ds-tag { border-radius: 4px; background: #fffdf6; color: #2a2620; font-family: var(--font-serif); font-style: italic; filter: var(--cut) drop-shadow(0 4px 6px oklch(0% 0 0 / 0.18)); }
+
+/* =============================== Sketch =============================== */
+
+.ds-style-sketch {
+  --pencil: light-dark(#3b3b3b, #ebe6da);
+  background-color: light-dark(#f6f1e4, oklch(23% 0.012 250));
+  background-image: linear-gradient(light-dark(oklch(55% 0.08 250 / 0.16), oklch(80% 0.04 250 / 0.1)) 1px, transparent 1px);
+  background-size: 100% 28px;
+}
+.ds-style-sketch .ds-word { color: transparent; -webkit-text-stroke: 1.6px var(--pencil); filter: url(#sk-rough); }
+.ds-style-sketch .ds-role { border: 1.8px solid var(--pencil); color: var(--pencil); filter: url(#sk-rough); }
+.ds-style-sketch .ds-tag { border: 1.8px solid var(--pencil); border-radius: 3px; color: var(--pencil); font-family: var(--font-serif); font-style: italic; filter: url(#sk-rough); }
+.ds-style-sketch .d-face { color: var(--pencil); }
+.ds-style-sketch .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+.ds-style-sketch :is(.d-stamp, .d-tape, .d-pill, .d-paper) .d-label { font-family: var(--font-mono); font-size: 11px; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+.ds-style-sketch .it1-note-hand { color: light-dark(oklch(52% 0.16 25), oklch(72% 0.14 25)); }
+
+/* =============================== Minimal ============================== */
+
+.ds-style-minimal { --pencil: var(--text); background: var(--bg); }
+.ds-style-minimal .ds-word { color: var(--text); font-weight: 700; letter-spacing: -0.055em; }
+.ds-style-minimal .ds-role { padding: 6px 10px; border: 1px solid var(--text); border-radius: 0; color: var(--text); font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.ds-style-minimal .ds-tag { padding: 0; color: var(--text-2); font-size: 18px; }
+.ds-style-minimal .d-face { color: var(--text); }
+.ds-style-minimal .d-label { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.ds-style-minimal .sk-pencil { filter: none; }
+.ds-style-minimal .sk-pencil * { stroke-width: 1; }
+
+/* ================================ Glass =============================== */
+
+.ds-style-glass {
+  --frost: light-dark(oklch(100% 0 0 / 0.45), oklch(100% 0 0 / 0.08));
+  --frost-edge: light-dark(oklch(100% 0 0 / 0.75), oklch(100% 0 0 / 0.16));
+  background:
+    radial-gradient(circle at 18% 24%, light-dark(oklch(88% 0.06 var(--accent-h)), oklch(36% 0.08 var(--accent-h))), transparent 45%),
+    radial-gradient(circle at 82% 72%, light-dark(oklch(90% 0.05 340), oklch(32% 0.07 340)), transparent 45%),
+    radial-gradient(circle at 62% 14%, light-dark(oklch(92% 0.05 165), oklch(30% 0.05 165)), transparent 40%),
+    var(--bg);
+}
+.ds-style-glass .ds-word { color: var(--text); font-weight: 700; }
+.ds-style-glass :is(.ds-role, .ds-tag) { background: var(--frost); color: var(--text); backdrop-filter: blur(14px) saturate(1.5); box-shadow: inset 0 0 0 1px var(--frost-edge), 0 8px 24px -10px oklch(0% 0 0 / 0.25); }
+.ds-style-glass .ds-tag { border-radius: 14px; }
+.ds-style-glass .d-face { filter: none; color: var(--text); }
+.ds-style-glass .d-face::before { background: color-mix(in oklch, var(--c) 30%, var(--frost)); backdrop-filter: blur(14px) saturate(1.5); }
+.ds-style-glass .d-pill { color: var(--text); }
+
+/* ============================ Paper cutout ============================ */
+
+.ds-style-paper {
+  background-color: light-dark(oklch(95% 0.012 80), oklch(25% 0.01 60));
+  background-image: radial-gradient(oklch(0% 0 0 / 0.03) 1px, transparent 1.5px); background-size: 6px 6px;
+}
+.ds-style-paper .ds-word { color: light-dark(oklch(52% 0.1 35), oklch(78% 0.08 40)); text-shadow: 0 1px 0 oklch(0% 0 0 / 0.08), 0 6px 10px oklch(0% 0 0 / 0.16); }
+.ds-style-paper :is(.ds-role, .ds-tag) {
+  border-radius: 3px; background: color-mix(in oklch, var(--c, oklch(90% 0.03 80)) 50%, #fff); color: #2a2620;
+  box-shadow: 0 1px 0 oklch(0% 0 0 / 0.06), 0 8px 14px -6px oklch(0% 0 0 / 0.25);
+}
+.ds-style-paper .ds-tag { background: oklch(85% 0.05 75); font-family: var(--font-serif); font-style: italic; }
+.ds-style-paper .d-face { filter: drop-shadow(0 1px 0 oklch(0% 0 0 / 0.08)) drop-shadow(0 10px 12px oklch(0% 0 0 / 0.18)); }
+.ds-style-paper .d-face::before { filter: saturate(0.5) brightness(1.04); }
+
+/* ================================ Clay ================================ */
+
+.ds-style-clay { background: light-dark(oklch(95% 0.02 300), oklch(25% 0.03 300)); }
+.ds-style-clay .ds-word {
+  color: light-dark(oklch(70% 0.09 300), oklch(82% 0.07 300));
+  text-shadow: -1px -2px 0 oklch(100% 0 0 / 0.55), 2px 4px 0 light-dark(oklch(58% 0.09 300), oklch(56% 0.08 300)), 0 14px 20px oklch(0% 0 0 / 0.18);
+}
+.ds-style-clay :is(.ds-role, .ds-tag) {
+  background: color-mix(in oklch, var(--c, oklch(90% 0.04 80)) 70%, #fff); color: #3a3442;
+  box-shadow: inset 0 -5px 10px oklch(0% 0 0 / 0.08), inset 0 4px 8px oklch(100% 0 0 / 0.75), 0 10px 18px -8px oklch(0% 0 0 / 0.28);
+}
+.ds-style-clay .ds-tag { border-radius: 20px; }
+.ds-style-clay .d-face { filter: drop-shadow(0 12px 14px oklch(0% 0 0 / 0.16)); color: #3a3442; }
+.ds-style-clay .d-face::before { background: radial-gradient(circle at 32% 26%, oklch(100% 0 0 / 0.6), transparent 42%), radial-gradient(circle at 70% 80%, oklch(0% 0 0 / 0.08), transparent 50%), color-mix(in oklch, var(--c) 75%, #fff); }
+
+/* ============================== Risograph ============================= */
+
+.ds-style-riso {
+  --pink: oklch(70% 0.2 355); --blue: oklch(52% 0.17 255);
+  background-color: light-dark(oklch(96% 0.01 85), oklch(22% 0.01 260));
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+}
+.ds-style-riso .ds-word { color: var(--blue); text-shadow: 4px 3px 0 color-mix(in oklch, var(--pink) 85%, transparent); }
+.ds-style-riso .ds-role { background: color-mix(in oklch, var(--pink) 75%, transparent); color: var(--blue); box-shadow: 3px 2px 0 color-mix(in oklch, var(--blue) 60%, transparent); }
+.ds-style-riso .ds-tag { border: 2px solid var(--blue); color: var(--blue); box-shadow: 4px 3px 0 color-mix(in oklch, var(--pink) 80%, transparent); }
+.ds-style-riso .d-face { filter: drop-shadow(4px 3px 0 color-mix(in oklch, var(--blue) 80%, transparent)); color: oklch(30% 0.12 255); }
+.ds-style-riso .d-face::before { background: color-mix(in oklch, var(--pink) 80%, transparent); }
+.ds-style-riso .ds-k-deco:nth-child(even of .ds-k-deco) .d-face { filter: drop-shadow(4px 3px 0 color-mix(in oklch, var(--pink) 85%, transparent)); color: #fff; }
+.ds-style-riso .ds-k-deco:nth-child(even of .ds-k-deco) .d-face::before { background: color-mix(in oklch, var(--blue) 85%, transparent); }
+
+/* ============================== Brutalist ============================= */
+
+.ds-style-brutal {
+  --pencil: var(--text);
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 32px 32px;
+}
+.ds-style-brutal .ds-word { color: var(--text); letter-spacing: -0.05em; text-shadow: 5px 5px 0 var(--accent); }
+.ds-style-brutal :is(.ds-role, .ds-tag) {
+  border: 2.5px solid var(--text); border-radius: 0; background: var(--c, light-dark(#fff, oklch(30% 0.01 260))); color: #111;
+  box-shadow: 5px 5px 0 var(--text); font-family: var(--font-mono); font-size: 15px; font-weight: 600; text-transform: uppercase;
+}
+.ds-style-brutal .ds-tag { color: var(--text); text-transform: none; font-family: var(--font-sans); }
+.ds-style-brutal .d-face { filter: drop-shadow(5px 5px 0 var(--text)); color: #111; }
+.ds-style-brutal .sk-pencil { filter: none; }
+.ds-style-brutal .sk-pencil * { stroke: #111; stroke-width: 2.6; }
+.ds-style-brutal .d-label { font-family: var(--font-mono); font-weight: 700; text-transform: uppercase; }
+
+/* ============================ Enamel pins ============================= */
+
+.ds-style-enamel {
+  --gold: oklch(80% 0.12 85); --gold-d: oklch(58% 0.11 75);
+  background-color: light-dark(oklch(90% 0.02 80), oklch(26% 0.03 255));
+  background-image: repeating-linear-gradient(45deg, oklch(0% 0 0 / 0.03) 0 2px, transparent 2px 6px), repeating-linear-gradient(-45deg, oklch(0% 0 0 / 0.03) 0 2px, transparent 2px 6px);
+}
+.ds-style-enamel .ds-word {
+  background: linear-gradient(180deg, oklch(92% 0.09 90), var(--gold) 45%, var(--gold-d) 56%, oklch(86% 0.1 88));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 0 oklch(45% 0.09 70)) drop-shadow(0 6px 8px oklch(0% 0 0 / 0.25));
+}
+.ds-style-enamel :is(.ds-role, .ds-tag) {
+  background: linear-gradient(160deg, oklch(100% 0 0 / 0.35), transparent 40%), var(--c, #fffdf6); color: #2a2620;
+  box-shadow: 0 0 0 3px var(--gold), 0 0 0 4px var(--gold-d), 0 8px 12px -4px oklch(0% 0 0 / 0.3);
+}
+.ds-style-enamel .ds-tag { border-radius: 10px; font-family: var(--font-serif); font-style: italic; }
+.ds-style-enamel .d-face {
+  filter: drop-shadow(3px 0 0 var(--gold)) drop-shadow(-3px 0 0 var(--gold)) drop-shadow(0 3px 0 var(--gold)) drop-shadow(0 -3px 0 var(--gold))
+          drop-shadow(0 1px 0 var(--gold-d)) drop-shadow(0 8px 10px oklch(0% 0 0 / 0.25));
+}
+.ds-style-enamel .d-face::before { background: linear-gradient(160deg, oklch(100% 0 0 / 0.45), transparent 35%), var(--c); }
+
+/* ============================ Label maker ============================= */
+
+.ds-style-dymo { --tape: #17171a; --emboss: 0 1px 0 oklch(100% 0 0 / 0.35), 0 -1px 0 oklch(0% 0 0 / 0.6); background: light-dark(oklch(93% 0.004 260), oklch(34% 0.006 260)); }
+.ds-style-dymo :is(.ds-word, .ds-role, .ds-tag) {
+  border-radius: 3px; background: var(--tape); color: #f2f2f2; font-family: var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase;
+  text-shadow: var(--emboss); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.12), 0 3px 6px oklch(0% 0 0 / 0.25);
+}
+.ds-style-dymo .ds-word { padding: 6px 18px; font-size: clamp(44px, 7.5cqw, 92px); font-weight: 700; letter-spacing: 0.06em; }
+.ds-style-dymo .ds-role { padding: 8px 16px; font-size: 16px; }
+.ds-style-dymo .ds-k-role:nth-child(3n + 1 of .ds-k-role) .ds-role { --tape: oklch(48% 0.17 25); }
+.ds-style-dymo .ds-k-role:nth-child(3n + 2 of .ds-k-role) .ds-role { --tape: oklch(44% 0.14 255); }
+.ds-style-dymo .ds-k-role:nth-child(3n of .ds-k-role) .ds-role { --tape: oklch(42% 0.1 150); }
+.ds-style-dymo .ds-tag { padding: 9px 14px; font-size: 14px; }
+.ds-style-dymo .d-face { filter: drop-shadow(0 3px 5px oklch(0% 0 0 / 0.25)); color: #f2f2f2; }
+.ds-style-dymo .d-face::before { background: var(--tape); }
+.ds-style-dymo .ds-k-deco:nth-child(3n + 2 of .ds-k-deco) .d-face::before { background: oklch(48% 0.17 25); }
+.ds-style-dymo .ds-k-deco:nth-child(3n of .ds-k-deco) .d-face::before { background: oklch(44% 0.14 255); }
+.ds-style-dymo .d-label { font-family: var(--font-sans); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-shadow: var(--emboss); }
+.ds-style-dymo .d-face > svg { stroke: #f2f2f2; }
+.ds-style-dymo .d-lines i { background: oklch(50% 0 0); }
+.ds-style-dymo .d-stamp .d-label { border-color: oklch(100% 0 0 / 0.4); }
+
+
+/* ======================================================================
+   Round two. Restraint rule: one or two inks, no gloss, no glow.
+   ====================================================================== */
+
+/* =============================== Linocut ============================== */
+
+.ds-style-linocut {
+  --ink: light-dark(#1c1a17, #ece5d6); --paper: light-dark(#efe8da, #1d1b19); --cut: oklch(55% 0.14 30);
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+}
+.ds-style-linocut .ds-word { color: var(--ink); filter: url(#sk-rough); }
+.ds-style-linocut :is(.ds-role, .ds-tag) {
+  border-radius: 2px; color: var(--paper); filter: url(#sk-rough);
+  background: repeating-linear-gradient(-32deg, transparent 0 9px, var(--paper) 9px 10px), var(--ink);
+}
+.ds-style-linocut .d-face { filter: url(#sk-rough); color: var(--paper); }
+.ds-style-linocut .d-face::before { background: repeating-linear-gradient(-32deg, transparent 0 9px, var(--paper) 9px 10px), var(--ink); }
+.ds-style-linocut .ds-k-deco:nth-child(3n + 1 of .ds-k-deco) .d-face::before { background: repeating-linear-gradient(-32deg, transparent 0 9px, var(--paper) 9px 10px), var(--cut); }
+.ds-style-linocut .d-face > svg { stroke: var(--paper); }
+.ds-style-linocut .d-lines i { background: var(--paper); }
+.ds-style-linocut .d-stamp .d-label { border-color: var(--paper); }
+
+/* =========================== Halftone (restrained) ==================== */
+
+.ds-style-halftone {
+  --ink: light-dark(#141414, #efeae0); --tone: oklch(64% 0.12 25);
+  background-color: light-dark(#f7f4ee, #191816);
+  background-image: radial-gradient(circle, light-dark(oklch(0% 0 0 / 0.06), oklch(100% 0 0 / 0.06)) 1px, transparent 1.4px); background-size: 8px 8px;
+}
+.ds-style-halftone .ds-word { color: var(--ink); text-shadow: 3px 3px 0 color-mix(in oklch, var(--tone) 65%, transparent); }
+.ds-style-halftone :is(.ds-role, .ds-tag) { border: 2px solid var(--ink); color: var(--ink); background: radial-gradient(circle, color-mix(in oklch, var(--tone) 55%, transparent) 1.4px, transparent 1.8px) 0 0 / 6px 6px; }
+.ds-style-halftone .ds-tag { border-radius: 0; }
+.ds-style-halftone .d-face { filter: none; color: var(--ink); }
+.ds-style-halftone .d-face::before { background: radial-gradient(circle, var(--tone) 1.7px, transparent 2.1px) 0 0 / 7px 7px; }
+.ds-style-halftone .sk-pencil { filter: none; }
+.ds-style-halftone .sk-pencil * { stroke: var(--ink); stroke-width: 2.4; }
+
+/* ============================ Photocopy zine ========================== */
+
+.ds-style-xerox { background: light-dark(#f2f2f0, #1a1a1a); }
+.ds-style-xerox::after {
+  content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none; opacity: 0.5; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+}
+.ds-style-xerox .ds-face { filter: grayscale(1) contrast(1.5) brightness(1.04); }
+.ds-style-xerox .ds-word { color: light-dark(#111, #eee); }
+.ds-style-xerox :is(.ds-role, .ds-tag) {
+  background: light-dark(#fff, #e9e9e9); color: #111;
+  clip-path: polygon(1% 8%, 99% 0, 100% 90%, 2% 100%);
+}
+.ds-style-xerox .ds-tag { font-family: var(--font-mono); font-size: 14px; }
+
+/* ============================= Rubber stamp =========================== */
+
+.ds-style-stamp {
+  --red: oklch(52% 0.16 25); --blue: oklch(45% 0.12 255); --paper: light-dark(#f4efe4, #1c1a18);
+  background-color: var(--paper);
+}
+.ds-style-stamp .ds-face { filter: url(#ds-distress); }
+.ds-style-stamp .ds-word { color: var(--red); text-transform: uppercase; letter-spacing: -0.02em; }
+.ds-style-stamp :is(.ds-role, .ds-tag) {
+  border: 2.5px solid var(--blue); border-radius: 4px; color: var(--blue);
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 3.5px var(--blue);
+  font-family: var(--font-mono); font-size: 14px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+}
+.ds-style-stamp .d-face { color: var(--red); }
+.ds-style-stamp .ds-k-deco:nth-child(even of .ds-k-deco) .d-face { color: var(--blue); }
+.ds-style-stamp .sk-pencil { filter: none; }
+.ds-style-stamp .sk-pencil * { stroke-width: 2.6; }
+.ds-style-stamp .d-label { font-family: var(--font-mono); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ============================ Marker (restrained) ===================== */
+
+.ds-style-marker {
+  --ink: light-dark(#1b1b1b, #f1ede4); --hi: oklch(88% 0.11 100);
+  background: light-dark(#fbfaf7, #1a1a19);
+}
+.ds-style-marker .ds-word {
+  color: var(--ink); font-family: var(--font-flex); font-variation-settings: "CASL" 1, "wght" 800; letter-spacing: -0.03em;
+  background: linear-gradient(transparent 60%, color-mix(in oklch, var(--hi) 70%, transparent) 60% 86%, transparent 86%);
+}
+.ds-style-marker :is(.ds-role, .ds-tag) {
+  border: 3px solid var(--ink); border-radius: 18px 22px 16px 24px; color: var(--ink); filter: url(#sk-rough);
+  font-family: var(--font-flex); font-variation-settings: "CASL" 1, "wght" 700;
+  background: repeating-linear-gradient(-35deg, color-mix(in oklch, var(--hi) 65%, transparent) 0 3px, transparent 3px 8px);
+}
+.ds-style-marker .d-face { filter: none; color: var(--ink); }
+.ds-style-marker .d-face::before { background: repeating-linear-gradient(-35deg, color-mix(in oklch, var(--hi) 70%, transparent) 0 3px, transparent 3px 9px); }
+.ds-style-marker .sk-pencil * { stroke: var(--ink); stroke-width: 4; }
+.ds-style-marker .d-label { font-family: var(--font-flex); font-variation-settings: "CASL" 1, "wght" 750; }
+
+/* ============================== Letterpress =========================== */
+
+.ds-style-letterpress {
+  --paper: light-dark(oklch(96% 0.012 85), oklch(22% 0.01 70));
+  --ink: light-dark(oklch(32% 0.08 260), oklch(86% 0.04 85));
+  --hi: light-dark(oklch(100% 0 0 / 0.85), oklch(100% 0 0 / 0.07));
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+}
+.ds-style-letterpress .ds-word { color: var(--ink); font-family: "Fraunces", Georgia, serif; font-weight: 600; letter-spacing: -0.02em; text-shadow: 0 1px 0 var(--hi), 0 -1px 0 oklch(0% 0 0 / 0.22); }
+.ds-style-letterpress :is(.ds-role, .ds-tag) {
+  color: var(--ink); background: color-mix(in oklch, var(--paper) 93%, black); font-family: "Fraunces", Georgia, serif; font-weight: 500;
+  box-shadow: inset 0 1px 2px oklch(0% 0 0 / 0.18), 0 1px 0 var(--hi);
+}
+.ds-style-letterpress .d-face { color: var(--ink); filter: drop-shadow(0 1px 0 var(--hi)) drop-shadow(0 -1px 0 oklch(0% 0 0 / 0.18)); }
+.ds-style-letterpress .d-face::before { background: color-mix(in oklch, var(--paper) 91%, black); }
+.ds-style-letterpress .d-label { font-family: "Fraunces", Georgia, serif; font-weight: 600; }
+.ds-style-letterpress .d-face > svg { stroke: var(--ink); }
+.ds-style-letterpress .d-lines i { background: color-mix(in oklch, var(--ink) 35%, transparent); }
+.ds-style-letterpress .d-stamp .d-label { border-color: color-mix(in oklch, var(--ink) 50%, transparent); }
+
+/* =============================== Ink & wash =========================== */
+
+.ds-style-inkwash { --ink: light-dark(#1f2328, #ece8df); background: light-dark(#fbf9f4, #1b1c1e); }
+.ds-style-inkwash .ds-word {
+  color: var(--ink); filter: url(#sk-rough);
+  background: radial-gradient(ellipse at 42% 62%, color-mix(in oklch, oklch(80% 0.05 220) 50%, transparent), transparent 70%);
+}
+.ds-style-inkwash :is(.ds-role, .ds-tag) {
+  border: 2px solid var(--ink); color: var(--ink); filter: url(#sk-rough);
+  background: color-mix(in oklch, var(--c, oklch(86% 0.04 80)) 35%, transparent);
+}
+.ds-style-inkwash .ds-tag { font-family: var(--font-serif); font-style: italic; border-radius: 3px; }
+.ds-style-inkwash .d-face { filter: none; color: var(--ink); }
+.ds-style-inkwash .d-face::before { background: color-mix(in oklch, var(--c) 40%, transparent); filter: blur(2.5px) saturate(0.6); translate: 5px 4px; }
+.ds-style-inkwash .sk-pencil * { stroke: var(--ink); stroke-width: 2.2; }
+.ds-style-inkwash .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+
+/* =============================== Blueprint ============================ */
+
+.ds-style-blueprint {
+  --bp: oklch(95% 0.03 240);
+  background-color: light-dark(oklch(40% 0.11 255), oklch(28% 0.09 255));
+  background-image:
+    linear-gradient(oklch(100% 0 0 / 0.12) 1px, transparent 1px), linear-gradient(90deg, oklch(100% 0 0 / 0.12) 1px, transparent 1px),
+    linear-gradient(oklch(100% 0 0 / 0.06) 1px, transparent 1px), linear-gradient(90deg, oklch(100% 0 0 / 0.06) 1px, transparent 1px);
+  background-size: 80px 80px, 80px 80px, 16px 16px, 16px 16px;
+}
+.ds-style-blueprint .ds-word { color: transparent; -webkit-text-stroke: 1.4px var(--bp); }
+.ds-style-blueprint :is(.ds-role, .ds-tag) { border: 1.4px dashed var(--bp); border-radius: 0; color: var(--bp); font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+.ds-style-blueprint .d-face { color: var(--bp); }
+.ds-style-blueprint .sk-pencil { filter: none; }
+.ds-style-blueprint .sk-pencil * { stroke: var(--bp); stroke-width: 1.4; }
+.ds-style-blueprint .d-label { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; }
+.ds-style-blueprint ~ .ds-ring, .ds-top.ds-style-blueprint ~ .ds-ring { box-shadow: 0 0 0 1.5px var(--bp, #fff); }
+
+
+/* ======================================================================
+   Round three: the paint & ink family. Pale washes, dark marks, paper.
+   ====================================================================== */
+
+.ds-paper-tooth { }
+:is(.ds-style-watercolor, .ds-style-pencilwash, .ds-style-charcoal, .ds-style-colorpencil) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* ============================== Watercolor ============================ */
+
+.ds-style-watercolor { --paper: light-dark(#fbf8f2, #1d1d1f); --ink: light-dark(#2b2a28, #eceae4); background-color: var(--paper); }
+.ds-style-watercolor .ds-word { color: light-dark(oklch(44% 0.06 240), oklch(82% 0.05 240)); filter: url(#ds-wc-soft); }
+.ds-style-watercolor :is(.ds-role, .ds-tag) { position: relative; isolation: isolate; color: var(--ink); background: none; }
+.ds-style-watercolor :is(.ds-role, .ds-tag)::before {
+  content: ""; position: absolute; inset: -3px -6px; z-index: -1; border-radius: 40%;
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--c, oklch(85% 0.05 80)) 30%, var(--paper)), color-mix(in oklch, var(--c, oklch(85% 0.05 80)) 75%, var(--paper)));
+  filter: url(#ds-wc) saturate(0.75);
+}
+.ds-style-watercolor .ds-tag { font-family: var(--font-serif); font-style: italic; }
+.ds-style-watercolor .d-face { filter: none; color: var(--ink); }
+.ds-style-watercolor .d-face::before {
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--c) 28%, var(--paper)), color-mix(in oklch, var(--c) 68%, var(--paper)) 90%, color-mix(in oklch, var(--c) 82%, var(--ink) 8%) 100%);
+  filter: url(#ds-wc) saturate(0.75);
+}
+.ds-style-watercolor .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+.ds-style-watercolor .d-pill { color: var(--paper); }
+
+/* =============================== Gouache ============================== */
+/* Shapes wobble (url(#ds-brush), Shape wobble slider); letters use a separate,
+   much gentler filter (url(#ds-text), Text wobble slider) in a sturdy sans.
+   --name, --mix, --mix-li and --tag default to the locked look; iteration 05's palettes override them. */
+
+.ds-style-gouache {
+  --paper: light-dark(#f3ede2, #1e1c1a); --earth: oklch(58% 0.03 70); --label: "DM Sans", var(--font-sans);
+  --stroke-texture: repeating-linear-gradient(100deg, oklch(100% 0 0 / 0.06) 0 2px, transparent 2px 7px);
+  background-color: var(--paper);
+}
+.ds-style-gouache .ds-word { color: var(--name, light-dark(oklch(46% 0.09 35), oklch(78% 0.07 40))); font-family: var(--label); font-weight: 800; filter: url(#ds-text); }
+.ds-style-gouache :is(.ds-role, .ds-tag) {
+  position: relative; isolation: isolate; border-radius: 6px 14px 8px 12px; background: none; color: #2a2620;
+  font-family: var(--label); font-weight: var(--ds-weight, 600); letter-spacing: -0.005em;
+}
+.ds-style-gouache :is(.ds-role, .ds-tag)::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; filter: url(#ds-brush);
+  background: var(--stroke-texture), color-mix(in oklch, var(--c, oklch(80% 0.05 140)) var(--mix, 62%), var(--earth));
+}
+.ds-style-gouache .ds-tag::before { background: var(--stroke-texture), var(--tag, oklch(84% 0.04 80)); }
+.ds-style-gouache .ds-txt { display: inline-block; filter: url(#ds-text); }
+.ds-style-gouache .d-face { filter: drop-shadow(0 1px 0 oklch(0% 0 0 / 0.05)); color: #2a2620; }
+.ds-style-gouache .d-face::before { filter: url(#ds-brush); background: var(--stroke-texture), color-mix(in oklch, var(--c) var(--mix, 62%), var(--earth)); }
+.ds-style-gouache .d-label { font-family: var(--label); font-style: normal; font-weight: var(--ds-weight, 600); filter: url(#ds-text); }
+.ds-style-gouache :is(.d-stamp, .d-tape) .d-label { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+.ds-style-gouache .d-pill { color: #f3ede2; }
+.ds-style-gouache .d-linkedin .d-label { color: #f3ede2; font-size: 33px; font-weight: 800; }
+/* Mixed in oklab so LinkedIn blue stays blue (an oklch mix with the earth tone swings through purple). */
+.ds-style-gouache .d-linkedin::before { background: var(--stroke-texture), color-mix(in oklab, #0a66c2 var(--mix-li, 72%), var(--earth)); }
+.ds-style-gouache .d-turntable .tt-label { fill: color-mix(in oklch, var(--pop-pink) var(--mix, 62%), var(--earth)); }
+.ds-style-gouache .d-hover { font-family: var(--label); font-weight: var(--ds-weight, 600); font-size: 16px; color: #2a2620; filter: url(#ds-text); }
+.ds-style-gouache .d-photo { filter: drop-shadow(0 1px 0 oklch(0% 0 0 / 0.14)) drop-shadow(0 8px 14px oklch(0% 0 0 / 0.3)); }
+.ds-style-gouache .d-photo::before { background: light-dark(#fff, oklch(31% 0.01 70)); filter: none; box-shadow: inset 0 0 0 1px light-dark(oklch(0% 0 0 / 0.08), oklch(100% 0 0 / 0.1)); }
+.ds-style-gouache .d-photo .d-img { filter: saturate(0.8) sepia(0.12); }
+
+/* ============================== Sumi brush ============================ */
+
+.ds-style-sumi { --ink: light-dark(#141414, #efebe3); --seal: oklch(52% 0.17 28); --paper: light-dark(#f6f3ec, #191817); background-color: var(--paper); }
+.ds-style-sumi .ds-face { position: relative; }
+.ds-style-sumi .ds-word { color: var(--ink); font-family: "Fraunces", Georgia, serif; font-weight: 800; font-style: italic; letter-spacing: -0.02em; filter: url(#ds-brush); }
+.ds-style-sumi .ds-k-word:nth-child(1 of .ds-k-word) .ds-face::after {
+  content: ""; position: absolute; right: -26px; top: 10px; width: 24px; height: 24px; border-radius: 4px;
+  background: var(--seal); box-shadow: inset 0 0 0 3px var(--seal), inset 0 0 0 5px var(--paper); filter: url(#ds-distress);
+}
+.ds-style-sumi .ds-role { padding: 4px 2px; border-radius: 0; color: var(--ink); background: linear-gradient(var(--ink), var(--ink)) bottom / 100% 2.5px no-repeat; filter: url(#ds-brush); }
+.ds-style-sumi .ds-tag { padding: 0; color: var(--ink); font-family: "Fraunces", Georgia, serif; font-style: italic; }
+.ds-style-sumi .d-face { color: var(--ink); }
+.ds-style-sumi .sk-pencil { filter: url(#ds-brush); }
+.ds-style-sumi .sk-pencil * { stroke: var(--ink); stroke-width: 4.5; }
+.ds-style-sumi .d-label { font-family: "Fraunces", Georgia, serif; font-style: italic; font-weight: 500; }
+
+/* =========================== Fineliner & wash ========================= */
+
+.ds-style-fineliner { --ink: light-dark(#222, #e8e6e1); --wash: light-dark(oklch(88% 0.005 260), oklch(33% 0.005 260)); background: light-dark(#fdfdfb, #1a1a1b); }
+.ds-style-fineliner .ds-word { color: transparent; -webkit-text-stroke: 1px var(--ink); text-shadow: 7px 6px 0 var(--wash); }
+.ds-style-fineliner :is(.ds-role, .ds-tag) { border: 1px solid var(--ink); color: var(--ink); background: none; box-shadow: 5px 4px 0 var(--wash); font-size: 15px; font-weight: 500; }
+.ds-style-fineliner .ds-tag { border-radius: 0; }
+.ds-style-fineliner .d-face { filter: none; color: var(--ink); }
+.ds-style-fineliner .d-face::before { background: var(--wash); translate: 6px 5px; }
+.ds-style-fineliner .sk-pencil { filter: none; }
+.ds-style-fineliner .sk-pencil * { stroke: var(--ink); stroke-width: 1; }
+.ds-style-fineliner .d-label { font-family: var(--font-sans); font-size: 13px; font-weight: 500; }
+
+/* ========================= Pencil & watercolor ======================== */
+
+.ds-style-pencilwash { --pencil: light-dark(#4a4a4a, #e3dfd6); background-color: light-dark(#fbf8f1, #1c1b1a); }
+.ds-style-pencilwash .ds-word {
+  color: transparent; -webkit-text-stroke: 1.5px var(--pencil); filter: url(#sk-rough);
+  background: radial-gradient(ellipse at 42% 62%, color-mix(in oklch, oklch(78% 0.07 30) 45%, transparent), transparent 68%);
+}
+.ds-style-pencilwash :is(.ds-role, .ds-tag) { border: 1.6px solid var(--pencil); color: var(--pencil); filter: url(#sk-rough); background: color-mix(in oklch, var(--c, oklch(86% 0.05 80)) 40%, transparent); }
+.ds-style-pencilwash .ds-tag { border-radius: 3px; font-family: var(--font-serif); font-style: italic; }
+.ds-style-pencilwash .d-face { filter: none; color: var(--pencil); }
+.ds-style-pencilwash .d-face::before { background: color-mix(in oklch, var(--c) 45%, transparent); filter: url(#ds-wc) saturate(0.8); translate: 4px 4px; }
+.ds-style-pencilwash .sk-pencil * { stroke: var(--pencil); stroke-width: 1.6; }
+.ds-style-pencilwash .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+
+/* =============================== Charcoal ============================= */
+
+.ds-style-charcoal { --ink: light-dark(#262626, #e9e6e0); --smudge: light-dark(oklch(0% 0 0 / 0.16), oklch(100% 0 0 / 0.12)); background-color: light-dark(#ebe8e2, #232221); }
+.ds-style-charcoal .ds-word { color: var(--ink); filter: url(#ds-charcoal); }
+.ds-style-charcoal :is(.ds-role, .ds-tag) { border: 3px solid var(--ink); color: var(--ink); filter: url(#ds-charcoal); background: radial-gradient(ellipse at 30% 30%, var(--smudge), transparent 70%); }
+.ds-style-charcoal .ds-tag { border-radius: 3px; border-width: 2px; }
+.ds-style-charcoal .d-face { filter: none; color: var(--ink); }
+.ds-style-charcoal .d-face::before { background: radial-gradient(ellipse at 35% 35%, var(--smudge), transparent 75%); filter: blur(3px); }
+.ds-style-charcoal .sk-pencil { filter: url(#ds-charcoal); }
+.ds-style-charcoal .sk-pencil * { stroke: var(--ink); stroke-width: 3.2; }
+.ds-style-charcoal .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 600; }
+
+/* ================================ Indigo ============================== */
+
+.ds-style-indigo { --ink: light-dark(oklch(34% 0.1 265), oklch(84% 0.06 260)); --wash: oklch(60% 0.12 262); background: light-dark(#fbfbf8, #17181c); }
+.ds-style-indigo .ds-word { color: var(--ink); filter: url(#sk-rough); background: radial-gradient(ellipse at 40% 60%, color-mix(in oklch, var(--wash) 24%, transparent), transparent 70%); }
+.ds-style-indigo :is(.ds-role, .ds-tag) { border: 2px solid var(--ink); color: var(--ink); filter: url(#sk-rough); background: color-mix(in oklch, var(--wash) 18%, transparent); }
+.ds-style-indigo .ds-tag { border-radius: 3px; font-family: var(--font-serif); font-style: italic; }
+.ds-style-indigo .d-face { filter: none; color: var(--ink); }
+.ds-style-indigo .d-face::before { background: color-mix(in oklch, var(--wash) 26%, transparent); filter: url(#ds-wc); translate: 4px 3px; }
+.ds-style-indigo .ds-k-deco:nth-child(3n + 2 of .ds-k-deco) .d-face::before { background: color-mix(in oklch, var(--wash) 14%, transparent); }
+.ds-style-indigo .ds-k-deco:nth-child(3n of .ds-k-deco) .d-face::before { background: color-mix(in oklch, var(--wash) 40%, transparent); }
+.ds-style-indigo .sk-pencil * { stroke: var(--ink); stroke-width: 2; }
+.ds-style-indigo .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 400; }
+
+/* ============================ Colored pencil ========================== */
+
+.ds-style-colorpencil { --lead: light-dark(oklch(45% 0.02 60), oklch(78% 0.02 60)); background-color: light-dark(#fcfaf5, #1c1b19); }
+.ds-style-colorpencil .ds-word {
+  color: transparent; -webkit-text-stroke: 1px light-dark(oklch(42% 0.08 25), oklch(78% 0.07 25));
+  background: repeating-linear-gradient(-40deg, light-dark(oklch(55% 0.11 25), oklch(72% 0.09 25)) 0 1.2px, transparent 1.2px 3.6px);
+  -webkit-background-clip: text; background-clip: text;
+}
+.ds-style-colorpencil :is(.ds-role, .ds-tag) {
+  border: 1.6px solid var(--lead); color: var(--text); filter: url(#sk-rough);
+  background: repeating-linear-gradient(-40deg, color-mix(in oklch, var(--c, oklch(80% 0.05 80)) 85%, #555) 0 1.2px, transparent 1.2px 4px);
+}
+.ds-style-colorpencil .ds-tag { border-radius: 3px; font-family: var(--font-serif); font-style: italic; }
+.ds-style-colorpencil .d-face { filter: none; color: var(--text); }
+.ds-style-colorpencil .d-face::before { background: repeating-linear-gradient(-40deg, color-mix(in oklch, var(--c) 85%, #555) 0 1.3px, transparent 1.3px 4.5px); }
+.ds-style-colorpencil .sk-pencil * { stroke: var(--lead); stroke-width: 1.6; }
+.ds-style-colorpencil .d-label { font-family: var(--font-serif); font-style: italic; font-weight: 500; }
+.ds-style-gouache .d-cutout { --die: light-dark(#f7f2e8, oklch(13% 0.006 70)); --die-edge: drop-shadow(4px 0 0 var(--die)) drop-shadow(-4px 0 0 var(--die)) drop-shadow(0 4px 0 var(--die)) drop-shadow(0 -4px 0 var(--die)) url(#ds-brush) drop-shadow(0 2px 3px oklch(0% 0 0 / 0.16)); filter: none; }
+/* The octopus gets a die-cut paper border, brush-wobbled like the role stickers. The wobble lives on
+   the picture only, so the hover text on top stays as steady as every other label. */
+.ds-style-gouache .d-cutout .d-img { filter: saturate(0.7) sepia(0.1) var(--die-edge); }
+.ds-style-gouache .d-cutout.is-hk .d-img { filter: grayscale(0.6) brightness(1.75) contrast(0.55) var(--die-edge) !important; }

@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Kit styles: per-concept option bars, notices, extra sticker shapes, and
+   the specimen layout used by the cursor lab.
+   ========================================================================== */
+
+/* ---------- Options bar ---------- */
+
+.kit-opts {
+  position: absolute; z-index: 40;
+  display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center;
+  padding: 6px 8px 6px 12px; border-radius: 14px;
+  background: color-mix(in oklch, var(--surface) 88%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-2), inset 0 0 0 1px var(--line);
+  font-size: 12px; color: var(--text-2);
+  cursor: auto;
+}
+.kit-opts, .kit-opts * { cursor: auto !important; }
+.kit-opts button { cursor: pointer !important; }
+.kit-top-right { top: 14px; right: 14px; }
+.kit-top-left  { top: 14px; left: 14px; }
+.kit-opt { display: flex; align-items: center; gap: 8px; }
+.kit-opt > span { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.kit-opts .seg button { height: 26px; padding: 0 9px; font-size: 12px; }
+
+.kit-notice {
+  position: absolute; left: 50%; bottom: 18px; z-index: 40; transform: translateX(-50%);
+  max-width: min(92%, 520px); padding: 10px 14px; border-radius: 12px; text-align: center;
+  background: var(--text); color: var(--bg); font-size: 13px; box-shadow: var(--shadow-3);
+}
+
+.is-cursor-owned, .is-cursor-owned * { cursor: none !important; }
+.is-cursor-owned .kit-opts, .is-cursor-owned .kit-opts * { cursor: auto !important; }
+
+/* ---------- Extra sticker shapes (base sticker styles live in concepts.css) ---------- */
+
+.d-heart { width: 112px; height: 100px; font-size: 18px; padding-bottom: 14px; } /* label sits on the lobes' visual middle, above the box center */
+.d-heart::before { clip-path: path('M56 98 C 20 72, 0 52, 0 30 C 0 12, 14 0, 30 0 C 42 0, 51 7, 56 16 C 61 7, 70 0, 82 0 C 98 0, 112 12, 112 30 C 112 52, 92 72, 56 98 Z'); }
+.d-hex { width: 116px; height: 104px; font-size: 16px; }
+.d-hex::before { clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
+.d-tile { width: 96px; height: 96px; font-size: 20px; }
+.d-tile::before { border-radius: 22px; }
+
+/* ---------- Specimen layout ---------- */
+
+.sp {
+  position: relative; z-index: 1;
+  min-height: 100%;
+  display: grid; grid-template-rows: auto 1fr auto; gap: 28px;
+  padding: clamp(20px, 4cqw, 44px);
+}
+.sp-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.sp-mark {
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+  background: var(--text); color: var(--bg); font-weight: 700; font-size: 14px;
+}
+.sp-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.sp-link {
+  display: inline-flex; padding: 9px 14px; border-radius: 99px;
+  font-size: 15px; font-weight: 500; text-decoration: none;
+  transition: background-color 200ms;
+}
+.sp-link:hover { background: var(--bg-2); }
+.sp-hero { align-self: center; max-width: 900px; }
+.sp-kicker { margin: 0 0 14px; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-2); }
+.sp-name { margin: 0; font-size: clamp(48px, 9cqw, 128px); line-height: 0.92; letter-spacing: -0.045em; font-weight: 700; }
+.sp-tag { margin: 18px 0 26px; font-size: clamp(18px, 2.2cqw, 26px); color: var(--text-2); max-width: 32ch; }
+.sp-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.sp-btn {
+  display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border-radius: 99px;
+  border: 1px solid var(--line-2); background: var(--surface); color: var(--text);
+  font-size: 15px; font-weight: 600; text-decoration: none;
+}
+.sp-btn span, .sp-link span { display: inline-block; }
+.sp-btn-primary { background: var(--text); color: var(--bg); border-color: transparent; }
+.sp-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.sp-card {
+  display: flex; flex-direction: column; gap: 3px; padding: 10px 10px 14px; border-radius: 18px;
+  background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); text-decoration: none;
+  transition: transform calc(300ms * var(--dur)) var(--ease);
+}
+.stage[data-hover="on"] .sp-card:hover { transform: translateY(calc(-4px * var(--m))); }
+.sp-thumb { aspect-ratio: 16 / 7; margin-bottom: 8px; border-radius: 10px; background: linear-gradient(160deg, light-dark(oklch(95% 0.012 var(--h)), oklch(31% 0.014 var(--h))), light-dark(oklch(88% 0.02 var(--h)), oklch(25% 0.016 var(--h)))); }
+.sp-card b { font-size: 15px; }
+.sp-card > span:last-child { font-size: 13px; color: var(--text-2); }
+
+@container stage (max-width: 640px) {
+  /* Option bars move to the bottom so they never cover the nav. */
+  .kit-opts.kit-top-right, .kit-opts.kit-top-left { top: auto; bottom: 10px; left: 10px; right: 10px; justify-content: center; }
+  .kit-opt > span { display: none; }
+  .sp-cards { grid-template-columns: 1fr 1fr; }
+  .sp-cards .sp-card:nth-child(3) { display: none; }
+  .sp-link { padding: 7px 9px; font-size: 14px; }
+}
+
+/* Pooled and toggled elements: [hidden] must win over component display rules. */
+.concept-root [hidden] { display: none !important; }

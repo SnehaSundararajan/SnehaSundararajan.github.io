@@ -1,0 +1,379 @@
+/* ==========================================================================
+   Staging: iterations that mix concepts, and the branding panel.
+   ========================================================================== */
+
+.kit-bottom { left: 50%; bottom: 14px; transform: translateX(-50%); max-width: calc(100% - 28px); }
+
+/* ---------- Branding panel ---------- */
+
+.group-brand[hidden] { display: none; }
+.brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.brand-card {
+  display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto auto; column-gap: 10px; align-items: center;
+  padding: 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-align: left;
+}
+.brand-card:hover { border-color: var(--line-2); }
+.brand-card[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+.brand-aa { grid-row: span 2; font-size: 26px; font-weight: 700; line-height: 1; }
+.brand-dots { display: flex; gap: 3px; }
+.brand-dots i { width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1px oklch(0% 0 0 / 0.12); }
+.brand-card b { grid-column: 1 / -1; margin-top: 6px; font-size: 13px; font-weight: 600; }
+.brand-note { grid-column: 1 / -1; font-size: 11px; line-height: 1.3; color: var(--text-3); }
+
+/* ================= Iteration 01: Sticker desk × peek ================= */
+
+.it1 {
+  --die: light-dark(#fff, oklch(94% 0.005 85));
+  --die-cut: drop-shadow(3px 0 0 var(--die)) drop-shadow(-3px 0 0 var(--die)) drop-shadow(0 3px 0 var(--die)) drop-shadow(0 -3px 0 var(--die));
+  position: absolute; inset: 0; overflow: hidden; background: var(--bg-2);
+  background-image: radial-gradient(circle at 1px 1px, var(--line-2) 1px, transparent 0); background-size: 22px 22px;
+}
+.it1-flow { position: absolute; left: 7cqw; top: 20%; width: min(620px, 54%); display: flex; flex-direction: column; gap: 16px; }
+.it1-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.it1-s { position: absolute; left: 0; top: 0; z-index: 2; touch-action: none; user-select: none; cursor: grab; }
+.it1-flow .it1-s { position: static; }
+.it1-s.is-held { cursor: grabbing; }
+.it1-face { display: block; white-space: nowrap; rotate: calc(var(--r, 0deg) + var(--tilt, 0deg)); transition: scale calc(220ms * var(--dur)) var(--ease); }
+.it1-s.is-held .it1-face { scale: 1.07; }
+.stage[data-hover="on"] .it1-s:not(.is-held):hover .it1-face { scale: 1.03; }
+
+/* Name: vinyl word stickers, dark ink with a white die-cut edge in any theme. */
+.it1-word .it1-face {
+  padding: 0 0.04em; color: #1d1c22;
+  font-family: var(--font-display, var(--font-sans)); font-size: clamp(60px, 10.5cqw, 132px); font-weight: 800; line-height: 1; letter-spacing: -0.045em;
+  filter: var(--die-cut) drop-shadow(0 6px 8px oklch(0% 0 0 / 0.22));
+}
+.it1-pill .it1-face {
+  padding: 8px 18px; border-radius: 99px; background: var(--c); color: var(--pop-ink);
+  font-size: clamp(16px, 2.2cqw, 24px); font-weight: 650; letter-spacing: -0.01em;
+  filter: var(--die-cut) drop-shadow(0 4px 6px oklch(0% 0 0 / 0.2));
+}
+.it1-label .it1-face {
+  padding: 10px 16px; border-radius: 4px; background: #fffdf6; color: #2a2620;
+  font-family: var(--font-serif); font-size: clamp(18px, 2cqw, 22px); font-style: italic;
+  filter: var(--die-cut) drop-shadow(0 4px 6px oklch(0% 0 0 / 0.18));
+}
+.it1-s:focus-visible { outline: none; }
+.it1-s:focus-visible .it1-face, .it1-s:focus-visible .d-face { outline: 3px solid var(--accent); outline-offset: 6px; }
+.it1-under { position: absolute; inset: 0; z-index: 5000; pointer-events: none; clip-path: circle(0 at 50% 50%); } /* stays above stickers, which climb in z-index as they are dragged */
+.it1-bg, .it1-mirrors { position: absolute; inset: 0; }
+.it1-m { position: absolute; left: 0; top: 0; }
+.it1-tidy {
+  position: absolute; left: 16px; top: 16px; z-index: 30; height: 34px; padding: 0 14px; border-radius: 99px;
+  border: 1px solid var(--line-2); background: var(--surface); color: var(--text); font-size: 13px; font-weight: 600; box-shadow: var(--shadow-1);
+}
+.it1-hint { position: absolute; left: 124px; top: 23px; z-index: 1; margin: 0; font-family: var(--font-serif); font-size: 16px; font-style: italic; color: var(--text-3); pointer-events: none; }
+.it1-opts { z-index: 40; }
+@container stage (max-width: 700px) {
+  .it1-flow { left: 18px; top: 64px; width: calc(100% - 36px); gap: 10px; }
+  .it1-hint { display: none; }
+}
+
+/* Blueprint */
+[data-v="blueprint"] .it1-bg {
+  background-color: oklch(36% 0.12 255);
+  background-image: linear-gradient(oklch(100% 0 0 / 0.08) 1px, transparent 1px), linear-gradient(90deg, oklch(100% 0 0 / 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+[data-v="blueprint"] .it1-outline { position: absolute; inset: 0; border: 1.5px dashed oklch(92% 0.04 255 / 0.85); border-radius: 14px; }
+[data-v="blueprint"] .it1-tag, .it1-spec { position: absolute; left: 0; font-family: var(--font-mono); font-size: 10.5px; color: oklch(92% 0.04 255); white-space: nowrap; }
+[data-v="blueprint"] .it1-tag { top: calc(100% + 6px); }
+[data-v="blueprint"] .it1-m-intro { border: 1.5px dashed oklch(92% 0.04 255 / 0.85); border-radius: 24px; }
+.it1-redline { position: absolute; left: -16px; top: 0; bottom: 0; width: 1px; background: oklch(72% 0.18 25); }
+.it1-redline::before, .it1-redline::after { content: ""; position: absolute; left: -5px; width: 11px; height: 1px; background: oklch(72% 0.18 25); }
+.it1-redline::before { top: 0; }
+.it1-redline::after { bottom: 0; }
+
+/* Sketch */
+[data-v="sketch"] .it1-bg { background: #f6f1e4; background-image: linear-gradient(oklch(55% 0.08 250 / 0.18) 1px, transparent 1px); background-size: 100% 28px; }
+.it1-outline.rough { position: absolute; inset: 4px; border: 2px solid #3b3b3b; border-radius: 18px 26px 14px 30px; filter: url(#it1-rough); }
+.it1-hand { position: absolute; left: 0; top: calc(100% + 4px); font-family: var(--font-serif); font-size: 16px; font-style: italic; color: #3b3b3b; white-space: nowrap; }
+.it1-hand.small { font-size: 14px; }
+[data-v="sketch"] .it1-m-intro { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding: 34px 30px; border: 2px solid #3b3b3b; border-radius: 26px 18px 30px 20px; filter: url(#it1-rough); }
+.it1-scribble { display: block; width: 82%; height: 10px; border-radius: 99px; background: repeating-linear-gradient(90deg, #555 0 6px, transparent 6px 9px); opacity: 0.5; }
+.it1-scribble.short { width: 46%; }
+[data-v="sketch"] .it1-m-intro .it1-hand { left: auto; right: -10px; top: -30px; rotate: -6deg; color: oklch(55% 0.17 25); font-size: 20px; }
+
+/* UV secrets */
+[data-v="uv"] .it1-bg { background: radial-gradient(circle at 50% 50%, oklch(26% 0.12 300), oklch(13% 0.07 290)); }
+.it1-glow {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 6px; text-align: center;
+  font-family: var(--font-flex); font-size: 15px; font-variation-settings: "CASL" 1, "wght" 700;
+  color: oklch(93% 0.2 140); text-shadow: 0 0 6px oklch(85% 0.24 140), 0 0 18px oklch(80% 0.24 140);
+}
+[data-v="uv"] .it1-m-intro { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 6px; padding: 30px; }
+[data-v="uv"] .it1-m-intro .it1-glow { position: static; display: block; text-align: left; font-size: 20px; }
+[data-v="uv"] .it1-m-intro .it1-glow.big { font-size: 72px; line-height: 1; }
+
+/* Radiograph */
+[data-v="radio"] .it1-bg { background: radial-gradient(circle at 50% 45%, oklch(24% 0.03 230), oklch(9% 0.02 240)); }
+[data-v="radio"] :is(.it1-m, .it1-m-intro) { mix-blend-mode: screen; opacity: 0.88; filter: grayscale(1) sepia(0.5) hue-rotate(160deg) brightness(1.55) contrast(0.85); }
+[data-v="radio"] .it1-m-intro { padding: clamp(22px, 3cqw, 34px); border-radius: 24px; background: oklch(100% 0 0 / 0.1); color: oklch(94% 0.03 220); }
+
+/* Code */
+.it1-code {
+  position: absolute; inset: 0; margin: 0; overflow: hidden; padding: clamp(24px, 5cqw, 56px);
+  background: oklch(18% 0.02 265); color: oklch(88% 0.02 265);
+  font-family: var(--font-mono); font-size: clamp(12px, 1.4cqw, 15px); line-height: 1.75; white-space: pre-wrap;
+  columns: 2; column-gap: 48px;
+}
+.it1-code .t { color: oklch(76% 0.14 25); }
+.it1-code .a { color: oklch(80% 0.12 200); }
+.it1-code .s { color: oklch(83% 0.13 140); }
+.it1-code .c { color: oklch(64% 0.03 265); font-style: italic; }
+
+/* Notes under the desk */
+.it1-cork {
+  position: absolute; inset: 0; background-color: oklch(70% 0.06 65);
+  background-image: radial-gradient(oklch(62% 0.06 60) 1px, transparent 1.6px), radial-gradient(oklch(77% 0.05 70) 1px, transparent 1.6px);
+  background-size: 9px 9px, 13px 13px; background-position: 0 0, 4px 6px;
+}
+.it1-note { position: absolute; display: flex; flex-direction: column; gap: 4px; width: 200px; padding: 14px; rotate: var(--r); background: oklch(96% 0.05 95); color: #2a2620; box-shadow: 0 8px 14px oklch(0% 0 0 / 0.25); }
+.it1-note b { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+.it1-note span { font-family: var(--font-serif); font-size: 19px; font-style: italic; line-height: 1.2; }
+
+/* ================= Iteration 02: classic crossword board ================= */
+
+/* Full-bleed board. Premium squares are only a shade off the board, with
+   barely-there hue, so the labels carry the meaning and the tiles stay loud. */
+.cw.is-classic {
+  --board: light-dark(oklch(96.5% 0.006 85), oklch(23% 0.006 85));
+  --grid: light-dark(oklch(91.5% 0.006 85), oklch(28.5% 0.006 85));
+  --prem: light-dark(oklch(93.2% 0.008 85), oklch(26% 0.008 85));
+  --prem-ink: light-dark(oklch(62% 0.015 70), oklch(62% 0.012 70));
+  background: var(--board);
+}
+.is-classic .cw-board { border-radius: 0; box-shadow: none; }
+.is-classic .cw-board i { font-size: max(7px, calc(var(--cell) * 0.2)); letter-spacing: 0.04em; color: var(--prem-ink); }
+.is-classic .cw-tw { background: light-dark(oklch(91.5% 0.016 35), oklch(27.5% 0.016 35)); }
+.is-classic :is(.cw-dw, .cw-star) { background: light-dark(oklch(93% 0.012 10), oklch(26.5% 0.012 10)); }
+.is-classic .cw-tl { background: light-dark(oklch(92% 0.014 240), oklch(27% 0.014 240)); }
+.is-classic .cw-dl { background: var(--prem); }
+.is-classic .cw-board .cw-star { font-size: calc(var(--cell) * 0.42); color: light-dark(oklch(60% 0.03 10), oklch(70% 0.03 10)); }
+/* A faint frame marks the real 15 × 15 board inside the endless grid. */
+.cw-core { position: absolute; pointer-events: none; box-shadow: 0 0 0 1px light-dark(oklch(84% 0.008 85), oklch(36% 0.008 85)); }
+.cw-toolbar { position: absolute; left: 16px; top: 16px; z-index: 6; display: flex; gap: 6px; }
+.cw-toolbar button {
+  height: 34px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--line-2);
+  background: color-mix(in oklch, var(--surface) 88%, transparent); backdrop-filter: blur(8px);
+  color: var(--text); font-size: 13px; font-weight: 600; box-shadow: var(--shadow-1);
+}
+.cw-toolbar button:hover { border-color: var(--text-3); }
+.is-classic .cw-face {
+  background: light-dark(oklch(98.5% 0.006 85), oklch(90% 0.008 85)); color: #2a2620;
+  box-shadow: inset 0 -2px 0 oklch(86% 0.01 80), 0 1px 2px oklch(0% 0 0 / 0.14);
+}
+.is-classic .cw-tile[data-go] .cw-face { box-shadow: inset 0 -2px 0 oklch(86% 0.01 80), 0 1px 2px oklch(0% 0 0 / 0.14); }
+/* The name gets its own tile color, tied to the brand accent. */
+.is-classic .cw-tile.is-name .cw-face {
+  background: var(--accent-soft); color: var(--accent-text);
+  box-shadow: inset 0 -2px 0 color-mix(in oklch, var(--accent) 35%, transparent), 0 1px 2px oklch(0% 0 0 / 0.16);
+}
+.is-classic .cw-tile.is-lit .cw-face { background: oklch(91% 0.035 var(--accent-h)); color: oklch(32% 0.06 var(--accent-h)); }
+.is-classic .cw-rack { z-index: 4; background: light-dark(oklch(90% 0.012 70), oklch(30% 0.01 60)); box-shadow: inset 0 1px 0 oklch(100% 0 0 / 0.4), var(--shadow-2); transition: opacity 250ms; }
+.is-classic .cw-rack.is-empty { opacity: 0; pointer-events: none; }
+
+.cw.is-tiny .cw-face sub { display: none; }
+.cw.is-tiny .cw-board i { font-size: 6px; }
+
+/* Sketch underlay: a few handwritten margin notes in pencil red. */
+.it1-note-hand {
+  position: absolute; left: 62%; bottom: calc(100% + 6px); rotate: -5deg; white-space: nowrap;
+  font-family: var(--font-serif); font-size: 21px; font-style: italic; color: oklch(52% 0.16 25);
+}
+/* A hand-drawn arrow: one curved stroke from the note down to the sticker, with an open arrowhead. */
+.it1-note-hand::after {
+  content: ""; position: absolute; right: calc(100% + 2px); top: 45%; width: 30px; height: 30px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2034%2034%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.9%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M31%204c-9%200-17%203-21%209-3%204-4%209-4%2015%27/%3E%3Cpath%20d%3D%27M1.5%2022.5%206%2029l5.5-5.5%27/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2034%2034%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%271.9%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%27M31%204c-9%200-17%203-21%209-3%204-4%209-4%2015%27/%3E%3Cpath%20d%3D%27M1.5%2022.5%206%2029l5.5-5.5%27/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ============ Shared pencil style (iteration 01 sketch underlay, iteration 03) ============ */
+
+[data-v="sketch"] { --pencil: #3b3b3b; }
+.sk-pencil { position: absolute; inset: 0; overflow: visible; filter: url(#sk-rough); }
+.sk-pencil * { fill: none; stroke: var(--pencil, #3b3b3b); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.it3-text {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 4px 10px; text-align: center;
+  color: var(--pencil, #3b3b3b); font-family: var(--font-serif); font-size: 19px; font-style: italic; line-height: 1.1;
+}
+.it3-text.is-caps { font-family: var(--font-mono); font-size: 11px; font-style: normal; letter-spacing: 0.1em; text-transform: uppercase; }
+.it3-img { position: absolute; pointer-events: none; user-select: none; filter: grayscale(1) contrast(1.15) brightness(1.05); mix-blend-mode: multiply; opacity: 0.8; }
+.it3-img.is-cutout { inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.it3-img.is-photo { left: 10px; top: 10px; width: calc(100% - 20px); height: 142px; object-fit: cover; object-position: 50% 30%; }
+.it3-s.is-photo .it3-text { inset: auto 0 0; height: 24%; padding: 0; }
+.it3-text.is-script { font-size: clamp(18px, 2cqw, 22px); }
+.it3-text.is-role { font-family: var(--font-sans); font-size: clamp(16px, 2.2cqw, 24px); font-style: normal; font-weight: 600; letter-spacing: -0.01em; }
+.it3-wordline {
+  display: block; padding: 0 0.04em; white-space: nowrap; color: transparent; -webkit-text-stroke: 1.6px var(--pencil, #3b3b3b);
+  font-family: var(--font-display, var(--font-sans)); font-size: clamp(60px, 10.5cqw, 132px); font-weight: 800; line-height: 1; letter-spacing: -0.045em;
+  filter: url(#sk-rough);
+}
+.it1-m .it3-wordline { rotate: none; }
+
+/* ================= Iteration 03: drifting sketchbook ================= */
+
+.it3 {
+  --pencil: light-dark(#3b3b3b, #ebe6da);
+  position: absolute; inset: 0; overflow: hidden;
+  background-color: light-dark(#f6f1e4, oklch(23% 0.012 250));
+  background-image: linear-gradient(light-dark(oklch(55% 0.08 250 / 0.16), oklch(80% 0.04 250 / 0.1)) 1px, transparent 1px);
+  background-size: 100% 28px;
+}
+.it3-sketch { position: absolute; inset: 0; z-index: 1; } /* contains dragged stickers' z-index below the color layer */
+.it3-s { position: absolute; left: 0; top: 0; }
+.it3-s:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; border-radius: 12px; }
+.it3-in { position: relative; width: 100%; height: 100%; }
+.it3 .it1-note-hand { color: light-dark(oklch(52% 0.16 25), oklch(72% 0.14 25)); }
+.it3-color {
+  position: absolute; inset: 0; z-index: 10; pointer-events: none; clip-path: circle(0 at 50% 50%);
+  background: var(--bg-2); background-image: radial-gradient(circle at 1px 1px, var(--line-2) 1px, transparent 0); background-size: 22px 22px;
+}
+.it3-cursor { position: absolute; left: 0; top: 0; z-index: 11; pointer-events: none; border-radius: 50%; box-shadow: 0 0 0 1.5px var(--pencil), 0 0 0 4px color-mix(in oklch, var(--bg) 55%, transparent); }
+/* On small screens the drifting notes crowd the stickers; keep just the outlines. */
+@container stage (max-width: 640px) { .it3 .it1-note-hand { display: none; } }
+
+/* Iteration 03 stickers behave like iteration 01's: tilt while tossed, lift when held. */
+.it3-in { rotate: var(--tilt, 0deg); transition: scale calc(220ms * var(--dur)) var(--ease); }
+.it3-s.is-held .it3-in { scale: 1.07; }
+.stage[data-hover="on"] .it3-s:not(.is-held):hover .it3-in { scale: 1.03; }
+.it3-s { touch-action: none; user-select: none; }
+.it3 .it1-tidy { z-index: 30; }
+
+/* The real cursor: a small dot at the center of every peek circle. */
+.peek-dot {
+  position: absolute; left: calc(var(--dot, 8px) / -2); top: calc(var(--dot, 8px) / -2); z-index: 12; width: var(--dot, 8px); height: var(--dot, 8px); border-radius: 50%;
+  background: var(--pencil, var(--text)); box-shadow: 0 0 0 2px color-mix(in oklch, var(--bg) 80%, transparent);
+  pointer-events: none; transition: opacity 200ms;
+}
+
+/* Hover notes: the sticker's art steps back and a short line of text shows inside its outline, instantly. */
+.d-hover, .it3-hover {
+  position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 18px; text-align: center; pointer-events: none;
+  font-size: 15px; font-weight: 700; line-height: 1.05; white-space: normal; opacity: 0;
+}
+.it3-hover { color: var(--pencil, #3b3b3b); font-family: var(--font-serif); font-size: 19px; font-style: italic; font-weight: 400; }
+.is-hk :is(.d-hover, .it3-hover) { opacity: 1; }
+.is-hk > :is(svg:not(.sk-pencil), .d-img, .it3-img), .is-hk .sk-art { opacity: 0.14; }
+/* The octopus keeps its silhouette (and die-cut edge) while hovered: wash it pale instead of fading it. */
+.d-cutout.is-hk > .d-img { opacity: 1; filter: grayscale(0.6) brightness(1.75) contrast(0.55) !important; }
+.d-cutout .d-hover { padding: 24px; font-size: 17px; }
+/* Text over a picture gets its own solid backing so it passes AA whatever the drawing does behind it. */
+:is(.d-cutout, .it3-in:has(.is-cutout)) :is(.d-hover, .it3-hover) > span {
+  padding: 4px 9px 5px; border-radius: 8px; line-height: 1.15;
+  background: light-dark(#f7f2e8, #1a1816) !important; color: light-dark(#2a2620, #f1ead9) !important;
+  box-shadow: 0 1px 6px oklch(0% 0 0 / 0.25);
+}
+.it3-in.is-hk > .it3-img.is-cutout { opacity: 0.22; }
+
+/* Now playing: a small paper card with a play/pause button, beside the turntable. SoundCloud's player is hidden. */
+.tt-card {
+  position: absolute; left: 0; top: 0; z-index: 26; display: flex; align-items: center; gap: 8px; width: max-content; max-width: 340px; padding: 6px 12px 6px 6px; border-radius: 99px;
+  background: light-dark(#fffdf8, oklch(26% 0.008 70)); box-shadow: 0 1px 0 oklch(0% 0 0 / 0.1), 0 14px 30px -14px oklch(0% 0 0 / 0.4);
+  opacity: 0; pointer-events: none; transition: opacity calc(220ms * var(--dur)) var(--ease);
+}
+.tt-card.is-on { opacity: 1; pointer-events: auto; }
+.tt-now { margin: 0; font-family: "Recursive", var(--font-sans); font-variation-settings: "CASL" 1; font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.tt-now span { font-weight: 800; color: light-dark(oklch(52% 0.16 25), oklch(74% 0.13 25)); margin-right: 4px; }
+.tt-now a { color: inherit; opacity: 0.6; font-size: 11px; text-decoration: none; margin-left: 2px; }
+.tt-now a:hover { opacity: 1; }
+.tt-btn { display: grid; place-items: center; flex: none; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; cursor: pointer; background: light-dark(oklch(52% 0.16 25), oklch(74% 0.13 25)); color: light-dark(#fffdf8, oklch(26% 0.008 70)); }
+.tt-btn svg { width: 14px; height: 14px; fill: currentColor; }
+.tt-card .tt-ico-pause, .tt-card.is-playing .tt-ico-play { display: none; }
+.tt-card.is-playing .tt-ico-pause { display: inline; }
+.tt-embed { position: absolute; width: 1px; height: 1px; border: 0; opacity: 0; pointer-events: none; }
+.it3-s.is-photo .it3-hover { inset: auto 0 0; height: 24%; padding: 0; }
+.it3-s.is-photo .it3-in.is-hk > .it3-img { opacity: 0.8; }
+
+/* ================= Iteration 05: Gouache tuning ================= */
+/* Palettes re-declare the Gouache color hooks (--name, --mix, --tag) and the sticker pops on the
+   desk layer. Sleek and minimal: near-black paper in both themes (color-scheme: dark, so the ring,
+   photo frame, and the sketch under the circle follow), an off-white name, and stickers in near-
+   neutral light tones (chroma 0.03 or less) so nothing shouts. --mix is 100%: no earth tone at all.
+   Fills stay at L 80% or lighter so the dark labels keep AA contrast. LinkedIn drops to a slate blue. */
+
+.g5[data-palette]:not([data-palette="original"]) { color-scheme: dark; }
+.g5[data-palette] .ds-style-gouache { --glow-a: oklch(74% 0.1 40); --glow-b: oklch(74% 0.08 150); }
+.g5[data-palette]:not([data-palette="original"]) .ds-style-gouache { --mix: 100%; --mix-li: 45%; --earth: oklch(50% 0.01 260); }
+/* Onyx: true neutral. Black paper, white to light gray stickers. */
+.g5[data-palette="onyx"] .ds-style-gouache {
+  --paper: #0a0a0b;
+  --pop-yellow: oklch(94% 0 0); --pop-pink: oklch(88% 0 0); --pop-mint: oklch(91% 0 0);
+  --pop-blue: oklch(85% 0 0); --pop-orange: oklch(82% 0 0);
+  --name: oklch(96% 0 0); --tag: oklch(90% 0 0);
+  --glow-a: oklch(45% 0.02 260); --glow-b: oklch(40% 0.01 0);
+}
+/* Graphite: a hair cooler, stickers like brushed aluminum. */
+.g5[data-palette="graphite"] .ds-style-gouache {
+  --paper: #0d0e10;
+  --pop-yellow: oklch(93% 0.008 250); --pop-pink: oklch(87% 0.01 260); --pop-mint: oklch(90% 0.008 220);
+  --pop-blue: oklch(84% 0.015 255); --pop-orange: oklch(81% 0.01 240);
+  --name: oklch(95% 0.005 250); --tag: oklch(89% 0.008 250);
+  --glow-a: oklch(45% 0.05 255); --glow-b: oklch(42% 0.03 220);
+}
+/* Midnight: blue-black paper, faint ice tints. */
+.g5[data-palette="midnight"] .ds-style-gouache {
+  --paper: #070a12;
+  --pop-yellow: oklch(93% 0.02 230); --pop-pink: oklch(87% 0.025 270); --pop-mint: oklch(90% 0.025 200);
+  --pop-blue: oklch(84% 0.03 250); --pop-orange: oklch(81% 0.02 240);
+  --name: oklch(95% 0.01 240); --tag: oklch(89% 0.015 240);
+  --glow-a: oklch(42% 0.09 260); --glow-b: oklch(45% 0.06 210);
+}
+/* Stone: warm black, bone and putty stickers. */
+.g5[data-palette="stone"] .ds-style-gouache {
+  --paper: #0d0c0b;
+  --pop-yellow: oklch(93% 0.02 85); --pop-pink: oklch(87% 0.02 50); --pop-mint: oklch(90% 0.015 110);
+  --pop-blue: oklch(84% 0.01 80); --pop-orange: oklch(81% 0.025 65);
+  --name: oklch(95% 0.012 85); --tag: oklch(89% 0.018 80);
+  --glow-a: oklch(44% 0.04 60); --glow-b: oklch(38% 0.02 30);
+}
+/* One accent: Onyx neutrals, with a single soft mint on the Work sticker and the first role. */
+.g5[data-palette="accent"] .ds-style-gouache {
+  --paper: #0a0a0b;
+  --pop-yellow: oklch(88% 0.09 160); --pop-pink: oklch(88% 0 0); --pop-mint: oklch(91% 0 0);
+  --pop-blue: oklch(85% 0 0); --pop-orange: oklch(82% 0 0);
+  --name: oklch(96% 0 0); --tag: oklch(90% 0 0);
+  --glow-a: oklch(48% 0.07 160); --glow-b: oklch(40% 0.01 0);
+}
+
+/* Name type (the rest of the labels stay in DM Sans for readability). */
+.g5[data-type="fraunces"] .ds-top .ds-word { font-family: "Fraunces", Georgia, serif; font-variation-settings: "opsz" 144; letter-spacing: -0.03em; }
+.g5[data-type="recursive"] .ds-top .ds-word { font-family: "Recursive", var(--font-sans); font-variation-settings: "CASL" 1; }
+.g5[data-type="grotesk"] .ds-top .ds-word { font-family: "Space Grotesk", var(--font-sans); font-weight: 700; }
+.g5[data-type="serif"] .ds-top .ds-word { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+
+/* Sticker depth: a hard offset, a soft shadow, or both. A held sticker lifts further. */
+/* Offset colors. Declared on the desk layer so Glow can read the palette's --glow-a.
+   Slate is a cool blue-gray that reads on near-black paper without going warm. */
+.g5 .ds-top { --off-ink: light-dark(oklch(20% 0.01 60), oklch(6% 0 0)); --lift: 1; }
+.g5[data-ink="slate"] .ds-top { --off-ink: oklch(42% 0.03 250); }
+.g5[data-ink="glow"] .ds-top { --off-ink: color-mix(in oklch, var(--glow-a, oklch(45% 0.05 255)) 80%, black); }
+.g5[data-ink="light"] .ds-top { --off-ink: oklch(72% 0.005 250); }
+.g5 .ds-top .ds-item.is-held { --lift: 1.7; }
+.g5 .ds-top .ds-face { transition: scale calc(220ms * var(--dur)) var(--ease), filter calc(220ms * var(--dur)) var(--ease); }
+.g5[data-depth="offset"] .ds-top .ds-face { filter: drop-shadow(calc(var(--off) * var(--lift)) calc(var(--off) * var(--lift)) 0 var(--off-ink)); }
+.g5[data-depth="shadow"] .ds-top .ds-face { filter: drop-shadow(0 calc(var(--sh-y) * var(--lift)) calc(var(--sh-b) * var(--lift)) oklch(0% 0 0 / var(--sh-a))); }
+.g5[data-depth="both"] .ds-top .ds-face {
+  filter: drop-shadow(calc(var(--off) * var(--lift)) calc(var(--off) * var(--lift)) 0 var(--off-ink))
+          drop-shadow(0 calc(var(--sh-y) * var(--lift)) calc(var(--sh-b) * var(--lift)) oklch(0% 0 0 / var(--sh-a)));
+}
+
+/* Background glow: two blobs in the palette's pair, behind every sticker, inside the paper layer. */
+.g5-glow { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: var(--glow-o); }
+.g5[data-glow="none"] .g5-glow { display: none; }
+.g5-blob {
+  position: absolute; left: var(--ax); top: var(--ay); width: var(--glow-size); aspect-ratio: 1;
+  translate: -50% -50%; border-radius: 50%; filter: blur(var(--glow-blur));
+  will-change: transform; /* its own layer: the blur rasterizes once and drift only composites */
+  background: radial-gradient(closest-side, var(--glow-a), transparent);
+}
+.g5-blob.is-b { left: var(--bx); top: var(--by); background: radial-gradient(closest-side, var(--glow-b), transparent); }
+/* Aurora: long tilted ribbons instead of round orbs. */
+.g5[data-glow="aurora"] .g5-blob { aspect-ratio: 2.8; rotate: -18deg; }
+.g5[data-glow="aurora"] .g5-blob.is-b { rotate: 14deg; }
+/* Halo: soft rings of light with an empty middle. */
+.g5[data-glow="halo"] .g5-blob { background: radial-gradient(closest-side, transparent 38%, var(--glow-a) 66%, transparent); }
+.g5[data-glow="halo"] .g5-blob.is-b { background: radial-gradient(closest-side, transparent 38%, var(--glow-b) 66%, transparent); }
+/* Drift: a very slow wander, only with the Ambient lever on. */
+.g5[data-drift="on"] .g5-blob { animation: g5-drift calc(26s * var(--dur)) ease-in-out infinite alternate; }
+.g5[data-drift="on"] .g5-blob.is-b { animation-duration: calc(34s * var(--dur)); animation-direction: alternate-reverse; }
+@keyframes g5-drift { to { transform: translate(5%, -4%) scale(1.08); } }

@@ -1,0 +1,103 @@
+/* ==========================================================================
+   Website page frame: the full-window stage each page mounts into, plus the
+   few base rules the lab's chrome (lab.css) used to provide.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+svg { stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The stage fills the window; pages size themselves with container queries against it. */
+.stage {
+  position: fixed; inset: 0; overflow: hidden; background: var(--bg);
+  container-type: inline-size; container-name: stage; isolation: isolate;
+}
+.stage > .concept-root { position: absolute; inset: 0; overflow: auto; scrollbar-width: thin; }
+
+.toast {
+  position: fixed; left: 50%; bottom: 24px; z-index: 100;
+  translate: -50% 16px; opacity: 0; pointer-events: none;
+  padding: 10px 16px; border-radius: 99px;
+  background: var(--text); color: var(--bg); font-weight: 500; box-shadow: var(--shadow-3);
+  transition: opacity 200ms, translate calc(300ms * var(--dur)) var(--ease);
+}
+.toast.is-on { opacity: 1; translate: -50% 0; }
+
+/* Light/dark switch, fixed top right above every page: a painted sun or moon, no frame.
+   Colors are gouache earth mixes, like the desk's stickers. */
+.theme-btn {
+  --earth: oklch(58% 0.03 70);
+  position: fixed; top: 24px; right: 24px; z-index: 90;
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  /* A disc in the Gouache paper color, so text scrolling underneath never runs through the icon. */
+  border: 0; border-radius: 50%; background: light-dark(#f3ede2, #1e1c1a); cursor: pointer !important;
+  transition: rotate calc(300ms * var(--dur)) var(--ease), scale calc(200ms * var(--dur)) var(--ease);
+}
+.theme-btn:hover { scale: 1.1; rotate: -12deg; }
+.theme-btn :is(.i-moon, .i-sun) { width: 30px; height: 30px; filter: url(#theme-brush); overflow: visible; }
+.theme-btn .i-moon { width: 34px; height: 34px; } /* the crescent fills less of its box than the sun */
+.theme-btn .paint { stroke: none; }
+.theme-btn .coat { fill: none; stroke-width: 2.2; opacity: 0.55; }
+/* Mixed in oklab: an oklch mix from blue to the earth tone swings through purple. */
+.i-moon .paint { fill: color-mix(in oklab, oklch(50% 0.08 255) 70%, var(--earth)); }
+.i-moon .coat { stroke: oklch(80% 0.04 250); }
+.i-sun .paint { fill: color-mix(in oklch, oklch(84% 0.14 80) 72%, var(--earth)); }
+.i-sun .rays { stroke: color-mix(in oklch, oklch(78% 0.13 65) 72%, var(--earth)); stroke-width: 2.8; }
+.i-sun .coat { stroke: oklch(96% 0.04 90); }
+.theme-btn[data-mode="light"] .i-sun, .theme-btn[data-mode="dark"] .i-moon { display: none; }
+/* ================= Shared page frame =================
+   Every page uses one 1040px frame, centered. The tea cup (home) and the light/dark switch are
+   site-level buttons pinned to the frame's top corners at the same spot on every page; each page's
+   own copy of the cup is hidden. Each page's first row sits in that same 44px band (top 24px), with
+   room left and right for the two buttons. Long text (articles, resume) is a 760px column centered
+   in the frame; lists, images, and the About card use the full frame. */
+:root {
+  --pad: clamp(24px, 5vw, 64px);
+  --frame-x: max(var(--pad), (100vw - 1040px) / 2); /* the frame's inset from each window edge */
+  --chrome-top: 24px;
+  --chrome-gap: 56px; /* what a first row leaves beside each button */
+}
+.home-btn, .theme-btn { top: var(--chrome-top); }
+.theme-btn { right: calc(var(--frame-x) - 7px); } /* -7px: the painted icon, not its hit area, meets the edge */
+.home-btn {
+  position: fixed; left: calc(var(--frame-x) - 7px); z-index: 90;
+  display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%;
+  background: light-dark(#f3ede2, #1e1c1a); color: light-dark(#2a2620, #ece4d6); cursor: pointer !important;
+  transition: color 160ms;
+}
+.home-btn:hover, .home-btn:focus-visible { color: light-dark(oklch(46% 0.09 35), oklch(78% 0.07 40)); }
+.home-btn svg { width: 34px; height: 31px; stroke-width: 2.6; }
+body[data-route=""] .home-btn { display: none; }
+.stage .gwx-home { display: none !important; }
+
+/* Gouache pages (Work, Resume, About) lay out inside the frame. */
+.stage .gw { padding: var(--chrome-top) var(--frame-x) 96px; }
+.stage :is(.gwx-top, .rs-top, .ga-top) { min-height: 44px; margin-left: var(--chrome-gap); }
+.stage .rs-top { max-width: none; margin-right: var(--chrome-gap); }
+.stage .rs-actions { margin-right: 0; }
+/* An open article: the reader's padding is the frame inset, so text (760px) centers in the frame and
+   images span it; the sticky bar puts its back link and arrows in the same 44px band. */
+.stage .gwx-main { --gx-pad: var(--frame-x); }
+.stage .gw-reader:not(.is-side) .gwx-bar {
+  box-sizing: border-box; height: 92px; padding-block: 0;
+  padding-left: calc(var(--gx-pad) + var(--chrome-gap)); padding-right: calc(var(--gx-pad) + var(--chrome-gap));
+}
+
+/* Shown only without JavaScript: the essentials as plain text. */
+.fallback { max-width: 62ch; margin: 0 auto; padding: 12vh 24px; font-size: 17px; }
+.fallback h1 { margin: 0; font-size: 40px; letter-spacing: -0.03em; }
+.fallback a { color: var(--accent-text); }

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- The desk's tea cup (same paths as the tea sticker and the Work page's home button) on brown. -->
+  <rect width="64" height="64" rx="14" fill="#6b4226"/>
+  <g transform="translate(8 9)" fill="none" stroke="#f3ede2" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 18h26v8a11 11 0 0 1-11 11h-4A11 11 0 0 1 8 26Z"/>
+    <path d="M34 21h3a5 5 0 0 1 0 10h-4"/>
+    <path d="M5 40h34"/>
+    <path d="M16 4c-2 3 2 5 0 8M23 3c-2 3 2 5 0 8M30 4c-2 3 2 5 0 8"/>
+  </g>
+</svg>
